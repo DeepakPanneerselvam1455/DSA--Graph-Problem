@@ -1,5 +1,43 @@
-import java.util.*;
+/*
+The Indian Railway Network is planning to lay down new train tracks between cities to form a minimum cost railway
+network that connects all the cities directly or indirectly, avoiding any circular connections (i.e., loops).
+You are given a list of cities, and the cost to build a train track between each pair of cities.
+As a railway planner, your job is to select the train tracks to be laid down so that:
+All cities are connected (directly or indirectly)
+The total cost is minimum
+No circular paths (i.e., no cycle) should be formed
+Use Kruskal's Algorithm to find the Minimum Spanning Tree (MST) and print the selected tracks and total cost.
+Test Case 01 :
+Cities = [A, B, C, D]
+Tracks and Costs:
+A-B = 1
+A-C = 3
+B-C = 2
+B-D = 4
+C-D = 5
+Selected Tracks in MST:
+A-B (1)
+B-C (2)
+B-D (4)
+Total Minimum Cost = 7
 
+Test Case 02 :
+Cities = [P, Q, R, S, T]
+Tracks and Costs:
+P-Q = 6
+P-R = 1
+Q-R = 5
+Q-S = 3
+R-S = 5
+S-T = 2
+R-T = 4
+Selected Tracks in MST:
+P-R (1)
+S-T (2)
+Q-S (3)
+R-T (4)
+Total Minimum Cost = 10*/
+import java.util.*;
 public class Q5 {
     static class Edge {
         String u, v;
