@@ -72,6 +72,7 @@ Edges in MST:
 2 3 2 0
 */
 
+// Aproach 1
 import java.util.*;
 
 public class Q6 {
@@ -123,3 +124,98 @@ public class Q6 {
         }
     }
 }
+
+
+// Approach 2
+
+import java.util.*;
+
+class Edge implements Comparable<Edge> {
+    int city1, city2;
+    int cost;
+    int priority;
+
+    public Edge(int city1, int city2, int cost, int priority) {
+        this.city1 = city1;
+        this.city2 = city2;
+        this.cost = cost;
+        this.priority = priority;
+    }
+
+    @Override
+    public int compareTo(Edge other) {
+        if (this.cost != other.cost) {
+            return this.cost - other.cost;
+        }
+        return other.priority - this.priority;
+    }
+}
+
+class DSU {
+    int[] parent;
+    int[] rank;
+
+    public DSU(int n) {
+        parent = new int[n + 1];
+        rank = new int[n + 1];
+        for (int i = 1; i <= n; i++) {
+            parent[i] = i;
+        }
+    }
+
+    int find(int x) {
+        if (parent[x] != x) {
+            parent[x] = find(parent[x]);
+        }
+        return parent[x];
+    }
+
+    boolean union(int x, int y) {
+        int rootX = find(x);
+        int rootY = find(y);
+        if (rootX == rootY) return false;
+        if (rank[rootX] < rank[rootY]) {
+            parent[rootX] = rootY;
+        } else if (rank[rootX] > rank[rootY]) {
+            parent[rootY] = rootX;
+        } else {
+            parent[rootY] = rootX;
+            rank[rootX]++;
+        }
+        return true;
+    }
+}
+
+public class TelecomNetworkMST {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int m = sc.nextInt();
+        List<Edge> edges = new ArrayList<>();
+        for (int i = 0; i < m; i++) {
+            int city1 = sc.nextInt();
+            int city2 = sc.nextInt();
+            int cost = sc.nextInt();
+            int priority = sc.nextInt();
+            edges.add(new Edge(city1, city2, cost, priority));
+        }
+        Collections.sort(edges);
+        DSU dsu = new DSU(n);
+        int totalCost = 0;
+        List<Edge> mst = new ArrayList<>();
+        for (Edge e : edges) {
+            if (dsu.union(e.city1, e.city2)) {
+                mst.add(e);
+                totalCost += e.cost;
+                if (mst.size() == n - 1) break;
+            }
+        }
+        System.out.println("Total Cost: " + totalCost);
+        System.out.println("Edges in MST:");
+        for (Edge e : mst) {
+            System.out.println(e.city1 + " " + e.city2 + " " + e.cost + " " + e.priority);
+        }
+        sc.close();
+    }
+}
+
