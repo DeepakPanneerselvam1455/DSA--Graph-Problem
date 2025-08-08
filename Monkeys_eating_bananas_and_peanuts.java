@@ -32,7 +32,7 @@ For any wrong input display INVALID INPUT
 package Test1;
 
 import java.util.*;
-class Q1 
+class Monkeys_eating_bananas_and_peanuts 
 {
     public static void main(String []args){
         Scanner sc = new Scanner (System.in);
