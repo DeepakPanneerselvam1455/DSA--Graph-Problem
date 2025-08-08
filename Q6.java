@@ -10,9 +10,9 @@ Minimize the total cost of laying cables.
 
 Avoid cycles in the network to prevent data packet looping.
 
-If there are multiple ways to achieve the same minimum cost, choose the one with more high-speed (priority) links.
+If there are multiple ways to achieve the same minimum cost, choose the one with more high-speed (prior) links.
 
-Priority links are marked in the data with a flag (1 for high-speed, 0 for normal).
+prior links are marked in the data with a flag (1 for high-speed, 0 for normal).
 
 When comparing equal-cost MSTs, prefer the one with a greater count of high-speed links.
 
@@ -20,7 +20,7 @@ You must output:
 
 The total cost of the selected network.
 
-The list of edges (city1, city2, cost, priorityFlag) in the order they were added.
+The list of edges (city1, city2, cost, priorFlag) in the order they were added.
 	
 Test case 01 :
 
@@ -74,74 +74,52 @@ Edges in MST:
 
 import java.util.*;
 
-class Edge implements Comparable<Edge> {
-	int u, v, cost, priority;
-	public Edge(int u, int v, int cost, int priority) {
-		this.u = u;
-		this.v = v;
-		this.cost = cost;
-		this.priority = priority;
-	}
-	@Override
-	public int compareTo(Edge other) {
-		if (this.cost != other.cost) return this.cost - other.cost;
-		// Prefer higher priority if cost is same
-		return other.priority - this.priority;
-	}
-}
-
-class DSU {
-	int[] parent, rank;
-	public DSU(int n) {
-		parent = new int[n+1];
-		rank = new int[n+1];
-		for (int i = 1; i <= n; i++) parent[i] = i;
-	}
-	int find(int x) {
-		if (parent[x] != x) parent[x] = find(parent[x]);
-		return parent[x];
-	}
-	boolean union(int x, int y) {
-		int xr = find(x), yr = find(y);
-		if (xr == yr) return false;
-		if (rank[xr] < rank[yr]) parent[xr] = yr;
-		else if (rank[xr] > rank[yr]) parent[yr] = xr;
-		else { parent[yr] = xr; rank[xr]++; }
-		return true;
-	}
-}
-
 public class Q6 {
-	public static void main(String[] args) {
-		Scanner sc = new Scanner(System.in);
-		int n = sc.nextInt();
-		int m = sc.nextInt();
-		List<Edge> edges = new ArrayList<>();
-		for (int i = 0; i < m; i++) {
-			int u = sc.nextInt();
-			int v = sc.nextInt();
-			int cost = sc.nextInt();
-			int priority = sc.nextInt();
-			edges.add(new Edge(u, v, cost, priority));
-		}
-		Collections.sort(edges);
-		DSU dsu = new DSU(n);
-		int totalCost = 0, highSpeedCount = 0;
-		List<Edge> mst = new ArrayList<>();
-		for (Edge e : edges) {
-			if (dsu.union(e.u, e.v)) {
-				mst.add(e);
-				totalCost += e.cost;
-				highSpeedCount += e.priority;
-				if (mst.size() == n-1) break;
-			}
-		}
-		System.out.println("Total Cost: " + totalCost);
-		System.out.println("Edges in MST:");
-		for (Edge e : mst) {
-			System.out.println(e.u + " " + e.v + " " + e.cost + " " + e.priority);
-		}
-	}
+    static int find(int parent[], int i) {
+        if (parent[i] != i)
+            parent[i] = find(parent, parent[i]);
+        return parent[i];
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int n = sc.nextInt();
+        int m = sc.nextInt();
+
+        int[][] edges = new int[m][4];
+        for (int i = 0; i < m; i++) {
+            edges[i][0] = sc.nextInt();
+            edges[i][1] = sc.nextInt();
+            edges[i][2] = sc.nextInt();
+            edges[i][3] = sc.nextInt();
+        }
+
+        Arrays.sort(edges, (a, b) -> {
+            if (a[2] != b[2]) return a[2] - b[2];
+            return b[3] - a[3];
+        });
+
+        int[] parent = new int[n + 1];
+        for (int i = 1; i <= n; i++) parent[i] = i;
+
+        int totalCost = 0;
+        List<int[]> mst = new ArrayList<>();
+
+        for (int[] e : edges) {
+            int pu = find(parent, e[0]);
+            int pv = find(parent, e[1]);
+            if (pu != pv) {
+                parent[pu] = pv;
+                mst.add(e);
+                totalCost += e[2];
+            }
+            if (mst.size() == n - 1) break;
+        }
+
+        System.out.println("Total Cost: " + totalCost);
+        System.out.println("Edges in MST:");
+        for (int[] e : mst) {
+            System.out.println(e[0] + " " + e[1] + " " + e[2] + " " + e[3]);
+        }
+    }
 }
-
-
